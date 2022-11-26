@@ -53,19 +53,6 @@ func requireBodyMatchUser(t *testing.T, body *bytes.Buffer, user db.User) {
 	require.Equal(t, user.Username, gotUser.Username)
 	require.Equal(t, user.FullName, gotUser.FullName)
 	require.Equal(t, user.Email, gotUser.Email)
-	require.Empty(t, gotUser.HashedPassword)
-}
-
-func requireBodyMatchGetUser(t *testing.T, body *bytes.Buffer, user db.User) {
-	data, err := io.ReadAll(body)
-	require.NoError(t, err)
-
-	var gotUser db.User
-
-	err = json.Unmarshal(data, &gotUser)
-
-	require.NoError(t, err)
-	require.Equal(t, user, gotUser)
 }
 
 func (e eqCreateUserParamsMatcher) String() string {
@@ -264,7 +251,7 @@ func TestGetUserAPI(t *testing.T) {
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
-				requireBodyMatchGetUser(t, recorder.Body, user)
+				requireBodyMatchUser(t, recorder.Body, user)
 			},
 		},
 		{
