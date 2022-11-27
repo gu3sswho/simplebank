@@ -37,4 +37,7 @@ server:
 mock:
 	mockgen -package mockdb -destination db/mock/store.go github.com/gu3sswho/simplebank/db/sqlc Store
 
+dockerserver:
+	docker run --name simplebank --network bank-network -e DB_SOURCE="postgresql://root:secret@postgres12:5432/bank?sslmode=disable" -e GIN_MODE=release -p 8080:8080 simplebank:latest
+
 .PHONY: createvolume dropvolume postgres createdb dropdb migrateup migratedown migrateup1 migratedown1 sqlc test server mock
