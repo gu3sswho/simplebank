@@ -218,7 +218,7 @@ func TestCreateUserAPI(t *testing.T) {
 			require.NoError(t, err)
 
 			//start HTTP server and build request
-			server := NewServer(store)
+			server := newTestServer(t, store)
 			recorder := httptest.NewRecorder()
 			url := "/users"
 			request, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(data))
@@ -307,7 +307,7 @@ func TestGetUserAPI(t *testing.T) {
 			tc.buildStubs(store)
 
 			//start HTTP server and build request
-			server := NewServer(store)
+			server := newTestServer(t, store)
 			recorder := httptest.NewRecorder()
 			url := fmt.Sprintf("/users/%s", tc.username)
 			request, err := http.NewRequest(http.MethodGet, url, nil)
