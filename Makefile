@@ -5,7 +5,7 @@ dropvolume:
 	docker volume rm pgdata
 
 postgres:
-	docker run --name postgres12 -p 5432:5432 -v pgdata:/var/lib/postgresql/data -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:12-alpine
+	docker run --name postgres12 --network bank-network -p 5432:5432 -v pgdata:/var/lib/postgresql/data -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:12-alpine
 
 createdb:
 	docker exec -it postgres12 createdb --username=root --owner=root bank
@@ -36,5 +36,8 @@ server:
 
 mock:
 	mockgen -package mockdb -destination db/mock/store.go github.com/gu3sswho/simplebank/db/sqlc Store
+
+dockerserver:
+	docker run --name simplebank --network bank-network -e DB_SOURCE="postgresql://root:secret@postgres12:5432/bank?sslmode=disable" -e GIN_MODE=release -p 8080:8080 simplebank:latest
 
 .PHONY: createvolume dropvolume postgres createdb dropdb migrateup migratedown migrateup1 migratedown1 sqlc test server mock
